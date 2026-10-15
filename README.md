@@ -1,10 +1,11 @@
 # batt-buddy
 
-Battery time remaining in your macOS menu bar, like `3:42 left`. Unplug and it
-shows up; plug in and it gets out of the way.
+Battery time remaining in your macOS menu bar, like `3:42 left`. 
 
-macOS dropped the time estimate from its battery menu in 10.12.2. This puts it
-back, and does nothing else.
+Unplug and it shows up; plug in and it gets out of the way.
+
+macOS dropped the time estimate from its battery menu in **10.12.2**. This puts it
+back, and does **nothing else**.
 
 - One Swift file. No dependencies beyond macOS itself.
 - Updates when the power source changes, and once per minute.
