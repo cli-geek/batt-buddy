@@ -5,7 +5,14 @@ let app = NSApplication.shared
 app.setActivationPolicy(.accessory)
 
 let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+// Lets macOS remember where the user Cmd-drags the item across launches.
+item.autosaveName = "batt-buddy"
+let remainingItem = NSMenuItem(title: "", action: nil, keyEquivalent: "")
+remainingItem.isEnabled = false
 let menu = NSMenu()
+menu.autoenablesItems = false
+menu.addItem(remainingItem)
+menu.addItem(NSMenuItem.separator())
 menu.addItem(NSMenuItem(title: "Quit batt-buddy", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
 item.menu = menu
 
@@ -16,9 +23,12 @@ func refresh() {
   item.isVisible = seconds != -2
   if seconds == -1 {
     item.button?.title = "--:--"
+    remainingItem.title = "Calculating time remaining..."
   } else if seconds >= 0 {
     let minutes = Int(seconds) / 60
-    item.button?.title = String(format: "%d:%02d", minutes / 60, minutes % 60)
+    let time = String(format: "%d:%02d", minutes / 60, minutes % 60)
+    item.button?.title = "\(time) left"
+    remainingItem.title = "\(time) remaining"
   }
 }
 
