@@ -62,6 +62,8 @@ main() {
 EOF
 
   launchctl bootout "$domain/$label" 2>/dev/null || true
+  # Clears a "Start at Login" opt-out; bootstrap refuses a disabled service.
+  launchctl enable "$domain/$label"
   launchctl bootstrap "$domain" "$plist"
   echo "loaded $label from $plist"
 }

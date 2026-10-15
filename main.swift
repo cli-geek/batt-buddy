@@ -4,6 +4,37 @@ import IOKit.ps
 let app = NSApplication.shared
 app.setActivationPolicy(.accessory)
 
+let launchdLabel = "local.batt-buddy"
+let launchdDomain = "gui/\(getuid())"
+
+@discardableResult
+func launchctl(_ arguments: [String]) -> String {
+  let process = Process()
+  process.executableURL = URL(fileURLWithPath: "/bin/launchctl")
+  process.arguments = arguments
+  let pipe = Pipe()
+  process.standardOutput = pipe
+  try! process.run()
+  let output = pipe.fileHandleForReading.readDataToEndOfFile()
+  process.waitUntilExit()
+  return String(decoding: output, as: UTF8.self)
+}
+
+// launchd keeps the disabled flag across logins, so the LaunchAgent plist
+// written by install.sh never needs editing.
+func startsAtLogin() -> Bool {
+  !launchctl(["print-disabled", launchdDomain]).contains("\"\(launchdLabel)\" => true")
+}
+
+final class LoginToggle: NSObject {
+  @objc func toggle(_ sender: NSMenuItem) {
+    launchctl([startsAtLogin() ? "disable" : "enable", "\(launchdDomain)/\(launchdLabel)"])
+    sender.state = startsAtLogin() ? .on : .off
+  }
+}
+
+let loginToggle = LoginToggle()
+
 let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
 // Lets macOS remember where the user Cmd-drags the item across launches.
 item.autosaveName = "batt-buddy"
@@ -13,6 +44,10 @@ let menu = NSMenu()
 menu.autoenablesItems = false
 menu.addItem(remainingItem)
 menu.addItem(NSMenuItem.separator())
+let loginItem = NSMenuItem(title: "Start at login", action: #selector(LoginToggle.toggle(_:)), keyEquivalent: "")
+loginItem.target = loginToggle
+loginItem.state = startsAtLogin() ? .on : .off
+menu.addItem(loginItem)
 menu.addItem(NSMenuItem(title: "Quit batt-buddy", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
 item.menu = menu
 
