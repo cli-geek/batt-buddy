@@ -15,30 +15,51 @@ macOS stopped showing the time remaining in the menu bar battery icon in
 
 ## Install
 
-Requirements: macOS with the Xcode Command Line Tools (for `swiftc`). If
-`xcrun --find swiftc` fails, run `xcode-select --install` first.
+Requirements: macOS with the Xcode Command Line Tools (for `swiftc`). The
+installer checks for them and, if they are missing, tells you to run
+`xcode-select --install`.
+
+### One line
 
 ```sh
-git clone <repo-url> batt-buddy
+curl -fsSL https://raw.githubusercontent.com/cli-geek/batt-buddy/main/install.sh | bash
+```
+
+This downloads `main.swift` to `~/.local/share/batt-buddy`, compiles it there,
+and loads a per-user LaunchAgent at
+`~/Library/LaunchAgents/local.batt-buddy.plist`, so it starts at every login.
+
+Piping a script into `bash` runs it without showing it to you first. To read
+it before running it:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/cli-geek/batt-buddy/main/install.sh -o install.sh
+less install.sh
+bash install.sh
+```
+
+### From a clone
+
+```sh
+git clone https://github.com/cli-geek/batt-buddy.git
 cd batt-buddy
 ./install.sh
 ```
 
-`install.sh` compiles `main.swift` to `./batt-buddy` and loads a per-user
-LaunchAgent at `~/Library/LaunchAgents/local.batt-buddy.plist`, so it starts
-at every login. The agent points at the binary in the clone, so keep the clone
-where it is (or rerun `install.sh` after moving it).
-
-After changing the code, run `./install.sh` again to rebuild and reload.
+Run from a clone, the installer builds `./batt-buddy` in place and the agent
+points at it, so keep the clone where it is (or rerun `install.sh` after
+moving it). After changing the code, run `./install.sh` again to rebuild and
+reload.
 
 ## Uninstall
 
 ```sh
-./uninstall.sh
+curl -fsSL https://raw.githubusercontent.com/cli-geek/batt-buddy/main/uninstall.sh | bash
 ```
 
-This stops the agent and removes the plist. Delete the clone to remove the
-binary.
+or `./uninstall.sh` from a clone. This stops the agent, removes the plist, and
+deletes `~/.local/share/batt-buddy`. A clone is left alone; delete it yourself
+to remove that copy.
 
 ## FAQ
 
@@ -53,7 +74,7 @@ minute after unplugging. `pmset -g batt` shows `(no estimate)` at the same time.
 
 **How do I quit it?**
 Click the time and choose Quit. It stays stopped until your next login or
-until you rerun `./install.sh`. If it crashes, launchd restarts it.
+until you rerun the installer. If it crashes, launchd restarts it.
 
 **Why IOKit instead of parsing `pmset -g batt`?**
 `pmset` reads the same IOKit value. Calling the API directly avoids spawning
@@ -75,6 +96,6 @@ MIT. See [LICENSE](LICENSE).
 
 ## AI usage attestation
 
-The code, scripts, and this README were written by Claude (Anthropic,
-model Opus 5.5) through Claude Code, at the direction of the repository owner.
-The owner specified the requirements and reviewed the result.
+This program and its documentation were created with AI assistance.
+Requirements specified at the discretion of cli-geek. Output reviewed and
+verified.
