@@ -8,7 +8,8 @@ back, and does nothing else.
 
 - One Swift file. No dependencies beyond macOS itself.
 - Updates when the power source changes, and once per minute.
-- No Dock icon or window. Click the time for "3:42 remaining" and Quit.
+- No Dock icon or window. Click the time for "3:42 remaining", a Start at
+  login toggle, and Quit.
 
 ## Install
 
@@ -62,16 +63,12 @@ macOS is still working out an estimate, which takes about a minute after you
 unplug.
 
 **Can it sit next to the battery icon?**  
-Hold Cmd and drag it there. macOS remembers the spot. Apps can't place
-themselves in the menu bar, so this one's on you.
+Hold Cmd and drag it there. macOS remembers the spot.
 
 **How do I quit it?**  
 Click the time, choose Quit. It stays off until your next login or the next
-install. If it crashes, launchd restarts it.
-
-**Why IOKit and not `pmset -g batt`?**  
-`pmset` reads the same value. Asking IOKit directly skips a subprocess and
-text parsing, and the app hears about plug and unplug the moment they happen.
+install. If it crashes, launchd restarts it. To keep it from starting at login,
+untick `Start at login` in the same menu.
 
 **Battery cost?**  
 Close to none. It sleeps until a power event or the one-minute timer, then
@@ -79,7 +76,7 @@ reads one number.
 
 **Which macOS versions?**  
 Built and tested on Monterey 12.7.6 (Intel) only. The APIs are old and
-stable, so other versions will probably work, but its untested.
+stable, so other versions will probably work, but it's untested.
 
 ## License
 
@@ -89,6 +86,6 @@ MIT. See [LICENSE](LICENSE).
 
 This program and its documentation were created with AI assistance.
 
-Requirements specified at the discretion of cli-geek. 
+Requirements specified at the discretion of cli-geek.
 
 Output reviewed and verified.
